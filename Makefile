@@ -1,8 +1,16 @@
 TRUSTY_BASE_URL := https://cloud-images.ubuntu.com/vagrant/trusty/current
 TRUSTY_PATH     := vagrant/
+PYTHON_VERSION  ?= 2.7.11
+
+DEB := python/build/trusty-python_$(PYTHON_VERSION)-1_amd64.deb
 
 .PHONY: verify_box vagrant_up
 all: verify_sums vagrant_up
+
+build: $(DEB)
+
+$(DEB): | vagrant_up
+	vagrant ssh -c 'cd /srv/python && make PYTHON_VERSION=$(PYTHON_VERSION)'
 
 vagrant_up:
 	vagrant up

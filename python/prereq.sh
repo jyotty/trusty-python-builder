@@ -39,4 +39,4 @@ sudo apt-get install -y ruby2.0 ruby2.0-dev
 sudo gem2.0 update --system
 sudo gem2.0 install fpm --no-ri --no-rdoc
 
-gpg --import pubkeys.txt
+sudo -u vagrant -H gpg --import /srv/python/pubkeys.txt

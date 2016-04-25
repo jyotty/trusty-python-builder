@@ -1,15 +1,16 @@
-PYTHON_VERSION ?= 2.7.11
+python_binpath := /opt/python-$(PYTHON_VERSION)/bin/python$(firstword $(subst ., ,$(PYTHON_VERSION)))
 
-build: /opt/python-$(PYTHON_VERSION)/bin/python2.7
+build: $(python_binpath)
+	fpm -t deb -s dir -a amd64 -p build -v $(PYTHON_VERSION) --iteration 1 -n trusty-python /opt/python-$(PYTHON_VERSION)
 
-/opt/python-$(PYTHON_VERSION)/bin/python: verify_tarball
-	tar zxf Python-$(PYTHON_VERSION).tgz
+$(python_binpath): Python-$(PYTHON_VERSION)
 	cd Python-$(PYTHON_VERSION) && ./configure --prefix /opt/python-$(PYTHON_VERSION) --enable-ipv6
 	$(MAKE) -C Python-$(PYTHON_VERSION)
 	sudo $(MAKE) -C Python-$(PYTHON_VERSION) install
 
-verify_tarball: Python-$(PYTHON_VERSION).tgz Python-$(PYTHON_VERSION).tgz.asc
+Python-$(PYTHON_VERSION): Python-$(PYTHON_VERSION).tgz
 	gpg --verify Python-$(PYTHON_VERSION).tgz.asc Python-$(PYTHON_VERSION).tgz
+	tar zxf Python-$(PYTHON_VERSION).tgz
 
 Python-$(PYTHON_VERSION).tgz Python-$(PYTHON_VERSION).tgz.asc:
 	curl --progress-bar -O 'https://www.python.org/ftp/python/$(PYTHON_VERSION)/Python-$(PYTHON_VERSION).tgz{,.asc}'
